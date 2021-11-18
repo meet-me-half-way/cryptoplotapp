@@ -1,0 +1,1 @@
+web gunicorn app.EG_app:app
