@@ -1,1 +1,1 @@
-web gunicorn EG_app:app
+web gunicorn EG_app:application
