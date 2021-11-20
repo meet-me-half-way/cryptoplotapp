@@ -1,126 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Cryptocurrency Prices</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
-</head>
-<body>
-
-
-
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-body">
-                    <canvas id="canvas"></canvas>
-                </div>
+   <head>
+      <meta charset="UTF-8">
+      <title>Cryptocurrency Prices</title>
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+      <link href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" rel="stylesheet">
+   </head>
+   <!-- card for the chart canvas -->
+   <body>
+      <div class="container">
+         <div class="row">
+            <div class="col-12">
+               <div class="card">
+                  <div class="card-body">
+                     <canvas id="canvas"></canvas>
+                  </div>
+               </div>
             </div>
-        </div>
-    </div>
-    <div class="row justify-content-center">
-    <form action="{{ url_for("index")}}" method="post">
-    <label for="currencypair">Choose a currency pair:</label>
-    <select name="currencypair" id="currencypair" value = '{{currencypair}}'>
-      <option value="BTC-USD">BTC-USD</option>
-      <option value="ETH-USD">ETH-USD</option>
-      <option value="SHIB-USD">SHIB-USD</option>
-      <option value="LTC-USD">LTC-USD</option>
-    </select>
-    </div>
-        
-    <div class="row justify-content-center">
-    <label for="hist_values">Choose the number of historical values to display:</label>
-    <select name="hist_values" id="hist_values" value = '{{hist_values}}'>
-      <option value=10>10</option>
-      <option value=20>20</option>
-      <option value=50>50</option>
-      <option value=100>100</option>
-      <option value=1000>1000</option>
-    </select>
-    </div>
-    <div class="row justify-content-center">
-    <button type="submit">Graph</button>
-    </div>
-</div>
-
-
-<!--suppress JSUnresolvedLibraryURL -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
-<!--suppress JSUnresolvedLibraryURL -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
-<!--suppress JSUnresolvedLibraryURL -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
-<script>
-    $(document).ready(function () {
-        const config = {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: '{{currencypair}}',
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    data: [],
-                    fill: false,
-                }],
-            },
-            options: {
-                responsive: true,
-                title: {
-                    display: true,
-                    text: 'Cryptocurrency Prices'
-                },
-                tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                hover: {
-                    mode: 'nearest',
-                    intersect: true
-                },
-                scales: {
-                    xAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Time'
-                        }
-                    }],
-                    yAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Value'
-                        }
-                    }]
-                }
-            }
-        };
-
-        const context = document.getElementById('canvas').getContext('2d');
-
-        const lineChart = new Chart(context, config);
-        
-        const source = new EventSource("/chart-data?currency={{currencypair}}");
-
-        source.onmessage = function (event) {
-            const data = JSON.parse(event.data);
-            if (config.data.labels.length === {{hist_values}}) {
-                config.data.labels.shift();
-                config.data.datasets[0].data.shift();
-            }
-            config.data.labels.push(data.time);
-            config.data.datasets[0].data.push(data.value);
-            lineChart.update();
-        }
-    });
-</script>
-<script> 
-document.querySelector('#currencypair').value = '{{currencypair}}'
-document.querySelector('#hist_values').value = '{{hist_values}}'
-</script>
-</body>
+         </div>
+         <!-- the form inputs and the button -->
+         <div class="row justify-content-center">
+            <form action="{{ url_for("index")}}" method="post">
+            <label for="currencypair">Choose a currency pair:</label>
+            <select name="currencypair" id="currencypair" value = '{{currencypair}}'>
+               <option value="BTC-USD">BTC-USD</option>
+               <option value="ETH-USD">ETH-USD</option>
+               <option value="SHIB-USD">SHIB-USD</option>
+               <option value="LTC-USD">LTC-USD</option>
+            </select>
+         </div>
+         <div class="row justify-content-center">
+            <label for="hist_values">Choose the number of historical values to display:</label>
+            <select name="hist_values" id="hist_values" value = '{{hist_values}}'>
+               <option value=10>10</option>
+               <option value=20>20</option>
+               <option value=50>50</option>
+               <option value=100>100</option>
+               <option value=1000>1000</option>
+            </select>
+         </div>
+         <div class="row justify-content-center">
+            <button type="submit">Graph</button>
+         </div>
+      </div>
+      <!--stuff for the plot and the bootstrap-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>      
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+      <!-- script for getting the data from the SSE and plotting-->
+      <script>
+         $(document).ready(function () {
+             const config = {
+                 type: 'line',
+                 data: {
+                     labels: [],
+                     datasets: [{
+                         label: '{{currencypair}}',
+                         backgroundColor: 'rgb(255, 99, 132)',
+                         borderColor: 'rgb(255, 99, 132)',
+                         data: [],
+                         fill: false,
+                     }],
+                 },
+                 options: {
+                     responsive: true,
+                     title: {
+                         display: true,
+                         text: 'Cryptocurrency Prices'
+                     },
+                     tooltips: {
+                         mode: 'index',
+                         intersect: false,
+                     },
+                     hover: {
+                         mode: 'nearest',
+                         intersect: true
+                     },
+                     scales: {
+                         xAxes: [{
+                             display: true,
+                             scaleLabel: {
+                                 display: true,
+                                 labelString: 'Time'
+                             }
+                         }],
+                         yAxes: [{
+                             display: true,
+                             scaleLabel: {
+                                 display: true,
+                                 labelString: 'Value'
+                             }
+                         }]
+                     }
+                 }
+             };
+         
+             const context = document.getElementById('canvas').getContext('2d');
+         
+             const lineChart = new Chart(context, config);
+             
+             const source = new EventSource("/chart-data?currency={{currencypair}}");
+         
+             source.onmessage = function (event) {
+                 const data = JSON.parse(event.data);
+                 if (config.data.labels.length === {{hist_values}}) {
+                     config.data.labels.shift();
+                     config.data.datasets[0].data.shift();
+                 }
+                 config.data.labels.push(data.time);
+                 config.data.datasets[0].data.push(data.value);
+                 lineChart.update();
+             }
+         });
+      </script>
+      <!-- script for setting dropdown when button is cicked -->
+      <script> 
+         document.querySelector('#currencypair').value = '{{currencypair}}'
+         document.querySelector('#hist_values').value = '{{hist_values}}'
+      </script>
+   </body>
 </html>

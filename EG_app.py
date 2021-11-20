@@ -6,7 +6,7 @@ import urllib.request
 
 application = Flask(__name__)
 
-
+#route for start page and form submission
 @application.route('/',methods = ["GET","POST"])
 def index():
     print(str(request.headers))
@@ -17,13 +17,13 @@ def index():
     else:
         return render_template('EG.html',currencypair = "BTC-USD", hist_values = 20)
 
+
+#route for SSE
 @application.route('/chart-data')
 def chart_data():    
     currencypair = request.args.get('currency') 
     def generate_random_data(currencypair):
-        
         while True:
-             
             url = "https://www.cryptingup.com/api/markets"
             response = urllib.request.urlopen(url)
             data = response.read()  
@@ -35,10 +35,8 @@ def chart_data():
                 {'time': datetime.now().strftime('%H:%M:%S'), 'value': curr_price})
             yield f"data:{json_data}\n\n"
             time.sleep(5)
-
     return Response(generate_random_data(currencypair), mimetype='text/event-stream')
 
     
-
 if __name__ == '__main__':
     application.run(debug=False)
